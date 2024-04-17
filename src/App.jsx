@@ -4,12 +4,14 @@ import { GiPadlock } from "react-icons/gi";
 import OtpInput from "otp-input-react";
 import { FaSpinner } from "react-icons/fa6";
 import { BsFillTelephoneFill } from "react-icons/bs";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-// These two when install adds country codes and their flags to your input
+import { getAuth, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../firebase.config";
 import { RecaptchaVerifier } from "firebase/auth";
+
 import { toast, Toaster } from "react-hot-toast";
+// These two when install adds country codes and their flags to your input
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 
 function App() {
   const [otp, setOtp] = useState("");
@@ -31,9 +33,12 @@ function App() {
         {
           size: "invisible",
           callback: (response) => {
+            //Allow sign up with phone number
             onSignup();
           },
-          "expired-callback": () => {},
+          "expired-callback": () => {
+            //Respone expired, Ask user to resolve recaptcha
+          },
         },
         auth
       );
@@ -46,6 +51,7 @@ function App() {
     const appVerifier = window.recaptchaVerifier;
     const formatPh = "+" + ph;
 
+    const auth = getAuth();
     signInWithPhoneNumber(auth, formatPh, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
@@ -77,7 +83,7 @@ function App() {
   return (
     <section className="bg-gray-600 flex items-center justify-center min-h-screen">
       <div>
-        <Toaster toastOptions={{ duration: 4000 }} />
+        <Toaster toastOptions={{ duration: 2000 }} />
         <div id="recaptcha-container"></div>
         {user ? (
           <h2 className="">As you pass the OTP so, just send 2k to my opay </h2>
@@ -129,8 +135,8 @@ function App() {
                     <BsFillTelephoneFill size={30} />
                   </div>
 
-                  <label htmlFor="" className="font-bold text-xl text-center">
-                    Verify your number
+                  <label htmlFor="" className="font-bold text-xl text-center ">
+                    Verify using your Mobile number
                     {/* //Means we are linking the label to an input that has the ID of ph */}
                   </label>
                   <PhoneInput country={"us"} value={ph} onChange={setph} />
