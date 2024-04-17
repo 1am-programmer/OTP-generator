@@ -14,10 +14,8 @@ import { toast, Toaster } from "react-hot-toast";
 function App() {
   const [otp, setOtp] = useState("");
   //For the Otp input
-
   const [ph, setph] = useState("");
   //For country code
-
   const [loading, setLoading] = useState(false);
   //For the spinner
 
